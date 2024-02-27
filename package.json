@@ -1,0 +1,19 @@
+{
+  "name": "my-new-project",
+  "type": "module",
+  "devDependencies": {
+    "@wdio/allure-reporter": "^8.32.2",
+    "@wdio/cli": "^8.32.3",
+    "@wdio/local-runner": "^8.32.3",
+    "@wdio/mocha-framework": "^8.32.3",
+    "@wdio/spec-reporter": "^8.32.2"
+  },
+  "scripts": {
+    "wdio": "wdio run ./wdio.conf.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.7",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7"
+  }
+}

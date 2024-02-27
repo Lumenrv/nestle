@@ -6,7 +6,8 @@
     "@wdio/cli": "^8.32.3",
     "@wdio/local-runner": "^8.32.3",
     "@wdio/mocha-framework": "^8.32.3",
-    "@wdio/spec-reporter": "^8.32.2"
+    "@wdio/spec-reporter": "^8.32.2",
+    "wdio-docker-service": "^3.2.1"
   },
   "scripts": {
     "wdio": "wdio run ./wdio.conf.js"

@@ -50,7 +50,11 @@ export const config = {
     // https://saucelabs.com/platform/platform-configurator
     //
     capabilities: [{
-        browserName: 'chrome'
+        browserName: 'chrome',
+        acceptInsecureCerts: true,
+        'goog:chromeOptions': {
+            args: ['--headless', '--disable-gpu', '--window-size=1920,1080', '--disable-dev-shm-usage']
+        }
     }],
 
     //
@@ -60,7 +64,7 @@ export const config = {
     // Define all options that are relevant for the WebdriverIO instance here
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
-    logLevel: 'info',
+    logLevel: 'error',
     //
     // Set specific log levels per logger
     // loggers:

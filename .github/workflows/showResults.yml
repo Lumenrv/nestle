@@ -1,34 +1,56 @@
-name: WebdriverIO Tests with Allure Reports
+name: Test and create report
 
 on:
-  push:
-    branches:
-      - main  # Adjust this to the branch you want to trigger the workflow on
-
+    push:
+        branches: [master]
 jobs:
-  test:
-    name: Run WebdriverIO Tests
-    runs-on: ubuntu-latest
+    Run_test:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [14.17.0]
+                # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        steps:
+          - uses: actions/checkout@v2
+          - name: Use Node.js ${{ matrix.node-version }}
+            uses: actions/setup-node@v2
+            with:
+              node-version: ${{ matrix.node-version }}
+              cache: "npm"
+          - name: update node manager
+            run: npm i npm@latest
+          - name: install all dependencies
+            run: npm i
+          - name: start docker server
+            run: docker-compose -f ./selenium-4-grid.yml up -d
+          - name: Sleep for 60 seconds
+            run: sleep 60s
+            shell: bash
+          - name: run wdio test
+            run: npm run wdio
+          - name: Get Allure history
+            uses: actions/checkout@v2
+            if: always()
+            continue-on-error: true
+            with:
+              ref: gh-pages
+              path: gh-pages
 
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+          - name: Allure Report action from marketplace
+            uses: simple-elf/allure-report-action@master
+            if: always()
+            id: allure-report
+            with:
+              allure_results: allure-results
+              gh_pages: gh-pages
+              allure_report: allure-report
+              allure_history: allure-history
+              keep_reports: 20
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '14'  # Adjust this to your Node.js version
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Run Tests and Generate Allure Reports
-        run: |
-          npm test
-          npx allure generate --clean
-
-      - name: Publish Allure Reports to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./allure-report  # Adjust this to the directory where your Allure reports are generated
+          - name: Deploy report to Github Pages
+            if: always()
+            uses: peaceiris/actions-gh-pages@v2
+            env:
+              PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              PUBLISH_BRANCH: gh-pages
+              PUBLISH_DIR: allure-history
